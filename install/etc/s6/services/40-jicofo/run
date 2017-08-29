@@ -1,0 +1,70 @@
+#!/usr/bin/with-contenv bash
+
+while [ ! -f /tmp/state/30-* ]
+do
+  sleep 1
+done
+
+if [ ! -f /tmp/state/40-jicofo ]; then
+
+cat  > /etc/jitsi/jicofo/config <<EOF;
+JICOFO_HOST=localhost
+JICOFO_HOSTNAME=$VIRTUAL_HOST
+JICOFO_SECRET=$JICOFO_PASS
+JICOFO_PORT=5347
+JICOFO_AUTH_DOMAIN=auth.$VIRTUAL_HOST
+JICOFO_AUTH_USER=focus
+JICOFO_AUTH_PASSWORD=$JICOFO_USER_PASS
+JICOFO_OPTS=""
+JAVA_SYS_PROPS="-Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=/etc/jitsi -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=jicofo -Dnet.java.sip.communicator.SC_LOG_DIR_LOCATION=/var/log/jitsi -Djava.util.logging.config.file=/etc/jitsi/jicofo/logging.properties"
+EOF
+
+cat  > /etc/jitsi/jicofo/logging.properties <<EOF;
+handlers= java.util.logging.ConsoleHandler
+#handlers= java.util.logging.ConsoleHandler, com.agafua.syslog.SyslogHandler
+
+java.util.logging.ConsoleHandler.level = ALL
+java.util.logging.ConsoleHandler.formatter = net.java.sip.communicator.util.ScLogFormatter
+
+net.java.sip.communicator.util.ScLogFormatter.programname=Jicofo
+
+.level=INFO
+net.sf.level=SEVERE
+net.java.sip.communicator.plugin.reconnectplugin.level=FINE
+org.ice4j.level=SEVERE
+org.jitsi.impl.neomedia.level=SEVERE
+
+# Do not worry about missing strings
+net.java.sip.communicator.service.resources.AbstractResourcesService.level=SEVERE
+
+#net.java.sip.communicator.service.protocol.level=ALL
+
+# Enable debug packets logging
+#org.jitsi.impl.protocol.xmpp.level=FINE
+
+# Syslog(uncomment handler to use)
+com.agafua.syslog.SyslogHandler.transport = udp
+com.agafua.syslog.SyslogHandler.facility = local0
+com.agafua.syslog.SyslogHandler.port = 514
+com.agafua.syslog.SyslogHandler.hostname = localhost
+com.agafua.syslog.SyslogHandler.formatter = net.java.sip.communicator.util.ScLogFormatter
+com.agafua.syslog.SyslogHandler.escapeNewlines = false
+
+# to disable double timestamps in syslog uncomment next line
+#net.java.sip.communicator.util.ScLogFormatter.disableTimestamp=true
+
+# uncomment to see how Jicofo talks to the JVB
+#org.jitsi.impl.protocol.xmpp.colibri.level=ALL
+EOF
+
+	mkdir -p /www/logs/jitsi
+    chgrp -R jitsi /www/logs/jitsi
+    chgrp -R jitsi /etc/jitsi
+    mkdir -p /tmp/state
+	echo 'Initialization Complete' >/tmp/state/40-jicofo
+fi
+
+echo ''
+echo '** Starting jicofo'
+. /etc/jitsi/jicofo/config
+sudo -u jicofo JAVA_SYS_PROPS="-Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=/etc/jitsi -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=jicofo -Dnet.java.sip.communicator.SC_LOG_DIR_LOCATION=/www/logs/jitsi -Djava.util.logging.config.file=/etc/jitsi/jicofo/logging.properties" /usr/share/jicofo/jicofo.sh --host=localhost --domain=$VIRTUAL_HOST --secret=$JICOFO_PASS --user_domain=auth.$VIRTUAL_HOST --user_name=focus --user_password=$JICOFO_USER_PASS < /dev/null >> /www/logs/jitsi/jicofo.log 2>&1
