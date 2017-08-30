@@ -1,11 +1,15 @@
 #!/usr/bin/with-contenv bash
 
-if [ ! -f /tmp/state/20-prosody ]; then
-	sleep 2
-        sed -i -e "s/daemonize = true/daemonize = false/g" /etc/prosody/prosody.cfg.lua
-        sed -i -e "s/\/var\/log\/prosody\//\/www\/logs\/prosody\//g" /etc/prosody/prosody.cfg.lua
+while [ ! -f /tmp/state/10-* ]
+do
+  sleep 1
+done
 
-        chown -R prosody /var/lib/prosody
+if [ ! -f /tmp/state/20-prosody ]; then
+    sed -i -e "s/daemonize = true/daemonize = false/g" /etc/prosody/prosody.cfg.lua
+    sed -i -e "s/\/var\/log\/prosody\//\/www\/logs\/prosody\//g" /etc/prosody/prosody.cfg.lua
+
+    chown -R prosody /var/lib/prosody
 
 	mkdir -p /etc/prosody/conf.d/
 	cat  > /etc/prosody/conf.d/$VIRTUAL_HOST.cfg.lua <<EOF;
