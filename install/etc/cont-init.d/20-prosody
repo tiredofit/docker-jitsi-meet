@@ -1,0 +1,103 @@
+#!/usr/bin/with-contenv bash
+
+         sed -i -e "s/daemonize = true/daemonize = false/g" /etc/prosody/prosody.cfg.lua
+        sed -i -e "s/\/var\/log\/prosody\//\/www\/logs\/prosody\//g" /etc/prosody/prosody.cfg.lua
+
+        chown -R prosody /var/lib/prosody
+
+  mkdir -p /etc/prosody/conf.d/
+  cat  > /etc/prosody/conf.d/$VIRTUAL_HOST.cfg.lua <<EOF;
+VirtualHost "$VIRTUAL_HOST"
+        authentication = "anonymous"
+        ssl = {
+                key = "/etc/prosody/certs/$VIRTUAL_HOST.key";
+                certificate = "/etc/prosody/certs/$VIRTUAL_HOST.crt";
+        }
+
+        modules_enabled = {
+            "bosh";
+            "pubsub";
+        }
+
+        c2s_require_encryption = false
+
+VirtualHost "auth.$VIRTUAL_HOST"
+    ssl = {
+        key = "/etc/prosody/certs/auth.$VIRTUAL_HOST.key";
+        certificate = "/etc/prosody/certs/auth.$VIRTUAL_HOST.crt";
+    }
+    authentication = "internal_plain"
+
+admins = { "focus@auth.$VIRTUAL_HOST" }
+
+Component "conference.$VIRTUAL_HOST" "muc"
+
+Component "jitsi-videobridge.$VIRTUAL_HOST"
+    component_secret = "$JITSI_VIDEO_PASS"
+
+Component "focus.$VIRTUAL_HOST"
+    component_secret = "$JICOFO_PASS"
+
+EOF
+
+    
+  if [ -f /var/lib/prosody/$VIRTUAL_HOST.key ] ; then
+    echo 'Certificates already exist, skipping..'
+  else
+    echo 'Generating Certificates'
+    cat  > /tmp/generate-cert.sh <<EOF;
+#!/usr/bin/expect
+spawn prosodyctl cert generate $VIRTUAL_HOST
+expect "Choose key size"
+send -- "2048\n"
+expect "countryName"
+send -- "CA\n"
+expect "localityName"
+send -- "\n"
+expect "organizationName"
+send -- "\n"
+expect "organizationalUnitName"
+send -- "\n"
+expect "commonName"
+send -- "\n"
+expect "emailAddress"
+send -- "\n"
+expect ".crt"
+send -- "\n"
+exit 0
+EOF
+    cat  > /tmp/generate-cert-auth.sh <<EOF;
+#!/usr/bin/expect
+spawn prosodyctl cert generate auth.$VIRTUAL_HOST
+expect "Choose key size"
+send -- "2048\n"
+expect "countryName"
+send -- "CA\n"
+expect "localityName"
+send -- "\n"
+expect "organizationName"
+send -- "\n"
+expect "organizationalUnitName"
+send -- "\n"
+expect "commonName"
+send -- "\n"
+expect "emailAddress"
+send -- "\n"
+expect ".crt"
+send -- "\n"
+exit 0
+EOF
+    chmod +x /tmp/generate-cert.sh
+    chmod +x /tmp/generate-cert-auth.sh
+    sudo -u prosody /usr/bin/with-contenv /tmp/generate-cert.sh >/dev/null
+    sudo -u prosody /usr/bin/with-contenv /tmp/generate-cert-auth.sh >/dev/null
+                ln -sf /etc/prosody/certs/auth.$VIRTUAL_HOST.crt /usr/local/share/ca-certificates/auth.$VIRTUAL_HOST.crt
+                ln -s /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/prosody/certs/$VIRTUAL_HOST.cert
+                ln -s /var/lib/prosody/$VIRTUAL_HOST.crt /etc/prosody/certs/
+                ln -s /var/lib/prosody/$VIRTUAL_HOST.key /etc/prosody/certs/
+                ln -s /var/lib/prosody/auth.$VIRTUAL_HOST.crt /etc/prosody/certs/
+                ln -s /var/lib/prosody/auth.$VIRTUAL_HOST.key /etc/prosody/certs/
+  fi
+
+mkdir -p /tmp/state/
+touch /tmp/state/20-prosody-init

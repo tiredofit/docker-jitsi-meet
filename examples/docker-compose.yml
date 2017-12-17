@@ -3,7 +3,7 @@ version: '2'
 services:
   jitsi_meet-app:
     container_name: jitsi_meet-app
-    image: tiredofit/jitsi-meet
+    image: registry.selfdesign.org/docker/jitsi-meet:debian
     volumes:
       - /conf:/etc/prosody/conf.d
       - /certs:/var/lib/prosody

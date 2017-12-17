@@ -1,94 +1,18 @@
 #!/usr/bin/with-contenv bash
 
-while [ ! -f /tmp/state/99-container-init ]
-do
+if [ ! -f /tmp/state/10-nginx-init ]; then
   sleep 1
-done
+fi
 
 if [ ! -f /tmp/state/10-nginx ]; then
-
-   sed -i -e "s/<VIRTUAL_HOST>/$VIRTUAL_HOST/g" /etc/nginx/conf.d/default.conf
-   
-   if [ -f /assets/jitsi-meet/config.js ] ; then
-        echo '** Custom Jitsi Meet config.js Found'
-        cp -R /assets/jitsi-meet/config.js /etc/jitsi/meet/config.js
-   else
-	cat  > /etc/jitsi/meet/$VIRTUAL_HOST-config.js <<EOF;
-	/* jshint maxlen:false */
-
-var config = { 
-    hosts: {
-        domain: '$VIRTUAL_HOST',
-        muc: 'conference.$VIRTUAL_HOST', 
-    },
-    useNicks: false,
-    bosh: '//$VIRTUAL_HOST/http-bind', 
-    clientNode: 'http://jitsi.org/jitsimeet', 
-
-    p2pStunServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun2.l.google.com:19302" }
-    ],
-
-    desktopSharingChromeExtId: null,
-    desktopSharingChromeDisabled: true,
-    desktopSharingChromeSources: ['screen', 'window', 'tab'],
-    desktopSharingChromeMinExtVersion: '0.1',
-
-    desktopSharingFirefoxExtId: null,
-    desktopSharingFirefoxDisabled: false,
-    desktopSharingFirefoxMaxVersionExtRequired: 51,
-    desktopSharingFirefoxExtensionURL: null,
-
-    webrtcIceUdpDisable: false,
-    webrtcIceTcpDisable: false,
-
-    openSctp: true,
-
-    disable1On1Mode: false,
-    disableStats: false,
-    disableAudioLevels: false,
-    channelLastN: -1, 
-    enableRecording: false,
-    enableWelcomePage: true,
-    //enableClosePage: false, 
-                              
-    disableSimulcast: false,
-//    requireDisplayName: true, // Forces the participants that doesn't have display name to enter it when they enter the room.
-//    startAudioMuted: 10, // every participant after the Nth will start audio muted
-//    startVideoMuted: 10, // every participant after the Nth will start video muted
-    defaultLanguage: "en",
-
-// To enable sending statistics to callstats.io you should provide Applicaiton ID and Secret.
-//    callStatsID: "", // Application ID for callstats.io API
-//    callStatsSecret: "", // Secret for callstats.io API
-    /*noticeMessage: 'Service update is scheduled for 16th March 2015. ' +
-    'During that time service will not be available. ' +
-    'Apologise for inconvenience.',*/
-    disableThirdPartyRequests: false,
-    minHDHeight: 540,
-    enableUserRolesBasedOnToken: false,
-    disableSuspendVideo: true,
-    disableRtx: false,
-    resolution: 720,
-};
-EOF
-   fi
-
-   if [ -f /assets/jitsi-meet/interface_config.js ]; then
-        cp -R /assets/jitsi-meet/interface_config.js /usr/share/jitsi-meet/
-   fi
-	
 	mkdir -p /www/logs/nginx
 	mkdir -p /tmp/nginx
-    chown -R www-data /www/logs/nginx
+  chown -R www-data /www/logs/nginx
 	chown www-data /tmp/nginx
-    mkdir -p /tmp/state
+  mkdir -p /tmp/state
 	echo 'Initialization Complete' >/tmp/state/10-nginx
 fi
 
 echo ''
-echo '** Starting nginx'
+echo '** [jitsi-meet] Starting nginx..'
 exec nginx
-

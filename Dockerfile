@@ -1,27 +1,31 @@
-FROM tiredofit/debian:jessie
-LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
-
+FROM tiredofit/debian:stretch
+LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
 
 ### Dependencies Install
-  RUN apt-get update && \
-      echo 'deb http://download.jitsi.org stable/' >> /etc/apt/sources.list && \
-      curl https://download.jitsi.org/jitsi-key.gpg.key | apt-key add - && \
+  RUN curl -ssL https://download.jitsi.org/jitsi-key.gpg.key | apt-key add - && \
+      echo 'deb https://download.jitsi.org/nightly/deb unstable/' >> /etc/apt/sources.list && \
+      #curl -ssL https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add - && \
       apt-get update && \
-      apt-get -y install \
+      apt-get -y --allow-unauthenticated install \
+              dnsutils \
               expect \
               jitsi-meet \
+              nginx \
               sudo && \
-      apt-get clean && \      
+      apt-get clean && \
 
-### Logs  Installation
       mkdir -p /www/logs && \
+      mkdir -p /var/run/prosody && \
+      chown -R prosody /var/run/prosody && \
           
 ### Cleanup
-       rm -rf /var/log/prosody/* /var/log/jitsi/* /var/log/nginx/* /var/lib/apt/lists/*
+      rm -rf /var/log/prosody/* /var/log/jitsi/* /var/log/nginx/* /var/lib/apt/lists/*
+
+### Add Files
+  ADD install /
 
 ### Networking Configuration
   EXPOSE 80 443 5347 4443 10000-10020/udp
 
 ### Entrypoint Configuration
   ENTRYPOINT ["/init"]
-
