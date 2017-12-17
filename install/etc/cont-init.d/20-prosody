@@ -91,12 +91,13 @@ EOF
     chmod +x /tmp/generate-cert-auth.sh
     sudo -u prosody /usr/bin/with-contenv /tmp/generate-cert.sh >/dev/null
     sudo -u prosody /usr/bin/with-contenv /tmp/generate-cert-auth.sh >/dev/null
-                ln -sf /etc/prosody/certs/auth.$VIRTUAL_HOST.crt /usr/local/share/ca-certificates/auth.$VIRTUAL_HOST.crt
-                ln -s /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/prosody/certs/$VIRTUAL_HOST.cert
-                ln -s /var/lib/prosody/$VIRTUAL_HOST.crt /etc/prosody/certs/
-                ln -s /var/lib/prosody/$VIRTUAL_HOST.key /etc/prosody/certs/
-                ln -s /var/lib/prosody/auth.$VIRTUAL_HOST.crt /etc/prosody/certs/
-                ln -s /var/lib/prosody/auth.$VIRTUAL_HOST.key /etc/prosody/certs/
+    ln -sf /etc/prosody/certs/auth.$VIRTUAL_HOST.crt /usr/local/share/ca-certificates/auth.$VIRTUAL_HOST.crt
+    ln -s /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/prosody/certs/$VIRTUAL_HOST.cert
+    ln -s /var/lib/prosody/$VIRTUAL_HOST.crt /etc/prosody/certs/
+    ln -s /var/lib/prosody/$VIRTUAL_HOST.key /etc/prosody/certs/
+    ln -s /var/lib/prosody/auth.$VIRTUAL_HOST.crt /etc/prosody/certs/
+    ln -s /var/lib/prosody/auth.$VIRTUAL_HOST.key /etc/prosody/certs/
+    update-ca-certificates
   fi
 
 mkdir -p /tmp/state/

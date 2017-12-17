@@ -5,18 +5,12 @@ services:
     container_name: jitsi_meet-app
     image: tiredofit/jitsi-meet
     volumes:
-      - /conf:/etc/prosody/conf.d
-      - /certs:/var/lib/prosody
-      - /data:/var/lib/data
+      - ./logs:/www/logs
     environment:
       - VIRTUAL_HOST=example.domain.com
       - VIRTUAL_NETWORK=nginx-proxy
       - LETSENCRYPT_HOST=example.domain.com
       - LETSENCRYPT_EMAIL=email@Hostname.com
-
-      - LOCAL=local
-      - DOMAIN=domain.com
-      - PASSWORD=password
 
       - JITSI_VIDEO_PASS=secret1
 
@@ -31,4 +25,5 @@ networks:
   proxy-tier:
     external:
       name: nginx-proxy
+
 

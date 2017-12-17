@@ -10,22 +10,14 @@
         cp -R /assets/jitsi-meet/config.js /etc/jitsi/meet/config.js
    else
 	cat  > /etc/jitsi/meet/$VIRTUAL_HOST-config.js <<EOF;
-	/* jshint maxlen:false */
-
 var config = { 
     hosts: {
         domain: '$VIRTUAL_HOST',
         muc: 'conference.$VIRTUAL_HOST', 
-        bridge: 'jitsi-videobridge.$VIRTUAL_HOST',
-        focus: 'focus.$VIRTUAL_HOST'
+        bridge: 'jitsi-videobridge.$VIRTUAL_HOST'
     },
     useNicks: false,
     bosh: '//$VIRTUAL_HOST/http-bind', 
-    clientNode: 'http://jitsi.org/jitsimeet', 
-
-    p2pStunServers: [
-        { urls: "stun:stun.l.google.com:19302" }
-    ],
 };
 EOF
    fi
