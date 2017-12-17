@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-if [ ! -f /tmp/state/30-jitsi-videobridge-init ]; then
+if [ ! -f /tmp/state/20-prosody ]; then
   sleep 1
 fi
 
@@ -9,7 +9,7 @@ if [ ! -f /tmp/state/30-jitsi-videobridge ]; then
     chgrp -R jitsi /www/logs/jitsi
     chgrp -R jitsi /etc/jitsi
     mkdir -p /tmp/state
-	echo 'Initialization Complete' >/tmp/state/30-jitsi-videobridge
+    echo 'Initialization Complete' >/tmp/state/30-jitsi-videobridge
 fi
 
 echo ''

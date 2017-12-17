@@ -1,16 +1,16 @@
 #!/usr/bin/with-contenv bash
 
-if [ ! -f /tmp/state/40-jicofo-init ]; then
+if [ ! -f /tmp/state/30-jitsi-videobridge ]; then
   sleep 1
 fi
 
 if [ ! -f /tmp/state/40-jicofo ]; then
-
-	mkdir -p /www/logs/jitsi
+sleep 7
+    mkdir -p /www/logs/jitsi
     chgrp -R jitsi /www/logs/jitsi
     chgrp -R jitsi /etc/jitsi
     mkdir -p /tmp/state
-	echo 'Initialization Complete' >/tmp/state/40-jicofo
+    echo 'Initialization Complete' >/tmp/state/40-jicofo
 fi
 
 echo ''

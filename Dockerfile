@@ -3,9 +3,9 @@ LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
 
 ### Dependencies Install
   RUN curl -ssL https://download.jitsi.org/jitsi-key.gpg.key | apt-key add - && \
-      #echo 'deb https://download.jitsi.org/nightly/deb unstable/' >> /etc/apt/sources.list && \
+      echo 'deb https://download.jitsi.org/nightly/deb unstable/' >> /etc/apt/sources.list && \
       #echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list && \
-      echo 'deb https://download.jitsi.org testing/' >> /etc/apt/sources.list && \
+      #echo 'deb https://download.jitsi.org testing/' >> /etc/apt/sources.list && \
       #curl -ssL https://download.jitsi.org/nightly/deb/unstable/archive.key | apt-key add - && \
       apt-get update && \
       apt-get -y --allow-unauthenticated install \
