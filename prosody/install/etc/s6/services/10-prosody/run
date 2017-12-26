@@ -6,6 +6,9 @@ do
 done
 
 if [ ! -f /tmp/state/10-prosody ]; then
+    chown -R prosody /etc/prosody
+    chown -R prosody /usr/lib/prosody
+    chown -R prosody /var/lib/prosody
     echo '** [prosody] Registering Focus User'
     sudo -u prosody prosodyctl register focus auth.$HOST $JICOFO_USER_PASS
     

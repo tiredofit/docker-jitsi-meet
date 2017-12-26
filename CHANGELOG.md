@@ -1,3 +1,8 @@
+## 2.1 2017-12-26 <dave at tiredofit dot ca>
+
+* Added LDAP Authentication features
+
+
 ## 2.0 2017-12-26 <dave at tiredofit dot ca>
 
 * Split packages into seperate images

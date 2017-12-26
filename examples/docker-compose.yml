@@ -15,6 +15,14 @@ services:
       - JITSI_VIDEO_PASS=secret1
       - JICOFO_PASS=secret2
       - JICOFO_USER_PASS=secret3
+
+      - LDAP_ENABLED=false
+      - LDAP_HOST=ldap.example.com
+      - LDAP_BIND_DN=cn=admin,dc=example,dc=com
+      - LDAP_BIND_PASS=supersecurepassword
+      - LDAP_BASE_DN=dc=example,dc=com
+      - LDAP_FILTER=(&(memberOf=CN=app-jitsi,OU=groups,DC=example,DC=com))
+
     networks:
       - proxy-tier
     restart: always
@@ -33,6 +41,9 @@ services:
 
       - JICOFO_PASS=secret2
       - JICOFO_USER_PASS=secret3
+
+      - LDAP_ENABLED=false
+
     networks:
       - proxy-tier
     restart: always

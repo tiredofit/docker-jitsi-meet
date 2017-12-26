@@ -1,16 +1,12 @@
 #!/usr/bin/with-contenv bash
 
-#cat  > /etc/jitsi/jicofo/config <<EOF;
-#JICOFO_HOST=localhost
-#JICOFO_HOSTNAME=$VIRTUAL_HOST
-#JICOFO_SECRET=$JICOFO_PASS
-#JICOFO_PORT=5347
-#JICOFO_AUTH_DOMAIN=auth.$VIRTUAL_HOST
-#JICOFO_AUTH_USER=focus
-#JICOFO_AUTH_PASSWORD=$JICOFO_USER_PASS
-#JICOFO_OPTS=""
-#JAVA_SYS_PROPS="-Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=/etc/jitsi -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=jicofo -Dnet.java.sip.communicator.SC_LOG_DIR_LOCATION=/var/log/jitsi -Djava.util.logging.config.file=/etc/jitsi/jicofo/logging.properties"
-#EOF
+LDAP_ENABLED=${LDAP_ENABLED:-"FALSE"}
+
+if [ "$LDAP_ENABLED" = "true" ] || [ "$LDAP_ENABLED" = "TRUE" ];  then
+   mkdir -p /usr/share/jicofo/.sip-communicator
+   echo 'org.jitsi.jicofo.auth.URL=XMPP:'$HOST >/usr/share/jicofo/.sip-communicator/sip-communicator.properties
+fi
+
 chown -R jicofo /usr/share/jicofo
 
 mkdir -p /tmp/state/

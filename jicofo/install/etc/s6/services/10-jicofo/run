@@ -12,7 +12,8 @@ do
 done
 
 if [ -f /certs/$HOST.crt ]; then
-	cp -R /certs/$HOST.crt /usr/local/share/ca-certificates/
+        sleep 5
+	cp -R /certs/*.crt /usr/local/share/ca-certificates/
 	update-ca-certificates >/dev/null 2>&1
 fi
 

@@ -1,5 +1,36 @@
 #!/usr/bin/with-contenv bash
 
+LDAP_ENABLED=${LDAP_ENABLED:-"FALSE"}
+
+if [ "$LDAP_ENABLED" = "true" ] || [ "$LDAP_ENABLED" = "TRUE" ];  then
+    
+LDAP_TLS=${LDAP_TLS:-"false"}
+LDAP_UID=${LDAP_UID:-"uid"}
+LDAP_CN=${LDAP_CN:-"cn"}
+
+    ### Sanity Test
+    if [ ! -n "LDAP_HOST" ]; then
+        echo '** [prosody] ERROR: No LDAP Host Entered! '
+        exit 1
+    fi
+
+    if [ ! -n "LDAP_BIND_DN" ]; then
+        echo '** [prosody] ERROR: No LDAP Bind User Entered! '
+        exit 1
+    fi
+
+    if [ ! -n "LDAP_BIND_PASS" ]; then
+        echo '** [prosody] ERROR: No LDAP Bind Pass Entered! '
+        exit 1
+    fi
+
+    if [ ! -n "LDAP_BASE_DN" ]; then
+        echo '** [prosody] ERROR: No LDAP_Base_DN Entered! '
+        exit 1
+    fi
+
+fi
+
 LOCAL_IP_ADDRESS=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 
         sed -i -e "s/daemonize = true/daemonize = false/g" /etc/prosody/prosody.cfg.lua
@@ -39,7 +70,8 @@ modules_enabled = {
 
 allow_registration = false
 c2s_require_encryption = false
-s2s_require_encryption = true
+consider_bosh_secure = true
+s2s_require_encryption = false
 s2s_secure_auth = false
 authentication = "internal_hashed"
 archive_expires_after = "1w" -- Remove archived messages after 1 week
@@ -52,11 +84,39 @@ log = {
 }
 
 certificates = "certs"
+EOF
+
+if [ "$LDAP_ENABLED" = "true" ] || [ "$LDAP_ENABLED" = "TRUE" ];  then
+    cat  >> /etc/prosody/prosody.cfg.lua <<EOF;
+ ldap = {
+    hostname      = '$LDAP_HOST', -- LDAP server location
+    use_tls     = $LDAP_TLS,
+    bind_dn       = '$LDAP_BIND_DN', -- Bind DN for LDAP authentication (optional if anonymous bind is supported)
+    bind_password = '$LDAP_BIND_PASS', -- Bind password (optional if anonymous bind is supported)
+    user = {
+      basedn        = '$LDAP_BASE_DN',
+      filter        = '$LDAP_FILTER',
+      usernamefield = '$LDAP_UID',
+      namefield     = '$LDAP_CN',
+    },
+}
+EOF
+fi
+
+    cat  >> /etc/prosody/prosody.cfg.lua <<EOF;
 
 component_interface = "$LOCAL_IP_ADDRESS"
 
 VirtualHost "$HOST"
-        authentication = "anonymous"
+EOF
+
+    if [ "$LDAP_ENABLED" = "true" ] || [ "$LDAP_ENABLED" = "TRUE" ];  then
+        echo '        authentication = "ldap2"'>> /etc/prosody/prosody.cfg.lua
+    else
+        echo '        authentication = "anonymous"'>> /etc/prosody/prosody.cfg.lua
+    fi
+
+cat  >> /etc/prosody/prosody.cfg.lua <<EOF;
         ssl = {
                 key = "/etc/prosody/certs/$HOST.key";
                 certificate = "/etc/prosody/certs/$HOST.crt";
@@ -76,7 +136,14 @@ VirtualHost "auth.$HOST"
         certificate = "/etc/prosody/certs/auth.$HOST.crt";
     }
     authentication = "internal_plain"
+EOF
 
+if [ "$LDAP_ENABLED" = "true" ] || [ "$LDAP_ENABLED" = "TRUE" ];  then
+    echo 'VirtualHost "guest.'$HOST'"' >> /etc/prosody/prosody.cfg.lua
+    echo '    authentication = "anonymous"' >> /etc/prosody/prosody.cfg.lua
+fi
+
+cat  >> /etc/prosody/prosody.cfg.lua <<EOF;        
 admins = { "focus@auth.$HOST" }
 
 Component "conference.$HOST" "muc"
@@ -169,3 +236,4 @@ fi
 
 mkdir -p /tmp/state/
 touch /tmp/state/10-prosody-init
+

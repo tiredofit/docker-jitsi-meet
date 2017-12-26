@@ -8,11 +8,16 @@ LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
    RUN   apk update && \
          apk add \
              expect \
+             lua-ldap \
              openssl \
              prosody \
              sudo \
              && \
 
+    cd /usr/lib/prosody/modules && \
+    wget https://raw.githubusercontent.com/prosody-modules/mod_lib_ldap/master/ldap.lib.lua && \
+    wget https://raw.githubusercontent.com/prosody-modules/mod_auth_ldap2/master/mod_auth_ldap2.lua && \
+    wget https://raw.githubusercontent.com/prosody-modules/mod_storage_ldap/master/mod_storage_ldap.lua && \
     rm -rf /usr/src/* /var/cache/apk/* /tmp/* /var/tmp/*
 
 ### Add Files
