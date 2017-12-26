@@ -1,4 +1,4 @@
-/www/logs/prosody/*.log {
+/var/log/prosody/*.log {
     daily
     ifempty
     rotate 7
