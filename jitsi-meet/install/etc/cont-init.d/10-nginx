@@ -1,0 +1,27 @@
+#!/usr/bin/with-contenv bash
+
+  ### Adjust NGINX Runtime Variables
+  mkdir -p /var/tmp/nginx
+  UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:="2G"}
+  sed -i -e "s/<UPLOAD_MAX_SIZE>/$UPLOAD_MAX_SIZE/g" /etc/nginx/nginx.conf
+  sed -i -e "s/<VIRTUAL_HOST>/$VIRTUAL_HOST/g" /etc/nginx/conf.d/default.conf
+  sed -i -e "s/<PROSODY_HOST>/$PROSODY_HOST/g"  /etc/nginx/conf.d/default.conf
+
+   if [ -f /assets/jitsi-meet/config.js ] ; then
+        echo '** [jitsi-meet] Custom Jitsi Meet config.js found'
+        cp -R /assets/jitsi-meet/config.js /app/config.js
+   else
+        sed -i -e "s/jitsi-meet.example.com/$VIRTUAL_HOST/g" /app/config.js
+        sed -i -e "/muc:/a \
+            bridge: 'jitsi-videobridge.$VIRTUAL_HOST'," /app/config.js
+        sed -i -e "s/muc: 'conference.$VIRTUAL_HOST'/muc: 'conference.$VIRTUAL_HOST',/g" /app/config.js
+   fi
+
+   if [ -d /assets/jitsi-meet ]; then
+        echo '** [jitsi-meet] Custom Jitsi Meet Addons found'
+        cp -R /assets/jitsi-meet/* /app/
+        chown -R jitsi /app/
+   fi
+
+mkdir -p /tmp/state/
+touch /tmp/state/10-nginx-init

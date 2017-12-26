@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bash
+
+while [ ! -f /tmp/state/10-jicofo-init ]
+do
+  sleep 1
+done
+
+while ! curl http://$PROSODY_HOST:5347/ >/dev/null 2>&1
+do
+  echo "** [jicofo] $(date) - Establishing connection with Prosody Host: "$PROSODY_HOST
+  sleep 10
+done
+
+if [ -f /certs/$HOST.crt ]; then
+	cp -R /certs/$HOST.crt /usr/local/share/ca-certificates/
+	update-ca-certificates >/dev/null 2>&1
+fi
+
+if [ ! -f /tmp/state/10-jicofo ]; then
+    mkdir -p /tmp/state
+    echo 'Initialization Complete' >/tmp/state/10-jicofo
+fi
+
+echo ''
+echo '** [jicofo] Starting jicofo'
+sudo -u jicofo /usr/share/jicofo/jicofo.sh --host=$PROSODY_HOST --domain=$HOST --secret=$JICOFO_PASS --user_domain=auth.$HOST --user_name=focus --user_password=$JICOFO_USER_PASS < /dev/null >> /var/log/jitsi/jicofo.log 2>&1

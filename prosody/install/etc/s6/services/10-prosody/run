@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+
+while [ ! -f /tmp/state/10-prosody-init ]
+do
+  sleep 1
+done
+
+if [ ! -f /tmp/state/10-prosody ]; then
+    echo '** [prosody] Registering Focus User'
+    sudo -u prosody prosodyctl register focus auth.$HOST $JICOFO_USER_PASS
+    
+    mkdir -p /tmp/state
+    echo 'Initialization Complete' >/tmp/state/10-prosody
+fi
+
+echo ''
+echo '** [prosody] Starting prosody'
+exec s6-setuidgid prosody prosodyctl start

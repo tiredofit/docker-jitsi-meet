@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bash
+
+while [ ! -f /tmp/state/10-jitsi-videobridge-init ]
+do
+  sleep 1
+done
+
+while ! curl http://$PROSODY_HOST:5347/ >/dev/null 2>&1
+do
+  echo "** [jitsi-videobridge] $(date) - Establishing connection with Prosody Host: "$PROSODY_HOST
+  sleep 10
+done
+
+if [ -f /certs/$HOST.crt ]; then
+	cp -R /certs/$HOST.crt /usr/local/share/ca-certificates
+	update-ca-certificates >/dev/null 2>&1
+fi
+
+if [ ! -f /tmp/state/10-jitsi-videobridge ]; then
+    mkdir -p /var/log/jitsi
+    chown -R jvb /var/log/jitsi
+    mkdir -p /tmp/state
+    echo 'Initialization Complete' >/tmp/state/10-jitsi-videobridge
+fi
+
+echo ''
+echo '** [jitsi-videobridge] Starting jitsi-videobridge'
+sudo -u jvb /usr/share/jitsi-videobridge/jvb.sh --host=$PROSODY_HOST --domain=$HOST --port=5347 --secret=$JITSI_VIDEO_PASS < /dev/null >> /var/log/jitsi/jvb.log 2>&1

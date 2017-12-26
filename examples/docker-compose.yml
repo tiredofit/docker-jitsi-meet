@@ -1,21 +1,84 @@
 version: '2'
 
 services:
-  jitsi_meet-app:
-    container_name: jitsi_meet-app
-    image: tiredofit/jitsi-meet
+  prosody:
+    build: ../src/prosody
+    container_name: prosody
+    image: prosody
     volumes:
-      - ./logs:/www/logs
+      - ./logs/prosody:/var/log/prosody
+      - ./certs:/certs
+
     environment:
-      - VIRTUAL_HOST=example.domain.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - LETSENCRYPT_HOST=example.domain.com
-      - LETSENCRYPT_EMAIL=email@Hostname.com
+      - HOST=meet.example.com
 
       - JITSI_VIDEO_PASS=secret1
+      - JICOFO_PASS=secret2
+      - JICOFO_USER_PASS=secret3
+    networks:
+      - proxy-tier
+    restart: always
+
+  jicofo:
+    build: ../src/jicofo
+    container_name: jicofo
+    image: jicofo
+    volumes:
+      - ./logs/jicofo:/var/log/jitsi
+      - ./certs:/certs
+
+    environment:
+      - PROSODY_HOST=prosody
+      - HOST=meet.example.com
 
       - JICOFO_PASS=secret2
       - JICOFO_USER_PASS=secret3
+    networks:
+      - proxy-tier
+    restart: always
+
+  jvb:
+    build: ../src/jvb/debian
+    container_name: jvb
+    image: jvb
+    ports: 
+      - 4443:4443
+      - 10000-10100/udp
+    volumes:
+      - ./logs/jvb:/var/log/jitsi
+      - ./certs:/certs
+
+    environment:
+      - HOST=meet.example.com
+      - PROSODY_HOST=prosody
+      - ENABLE_ZABBIX=FALSE
+      - JITSI_VIDEO_PASS=secret1
+
+      - NETWORK_MODE=NAT
+
+    networks:
+      - proxy-tier
+    restart: always
+
+  jitsi-meet:
+    build: ../src/jitsi-meet
+    container_name: jitsi-meet
+    image: jitsi-meet
+    volumes:
+      - ./assets/jitsi-meet:/assets/jitsi-meet
+      - ./logs/nginx:/var/log/nginx
+      - ./certs:/certs
+    environment:
+      - VIRTUAL_HOST=meet.example.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - LETSENCRYPT_HOST=meet.example.com
+      - LETSENCRYPT_EMAIL=email@example.com
+
+      - JITSI_VIDEO_PASS=secret1
+      - JICOFO_PASS=secret2
+      - JICOFO_USER_PASS=secret3
+
+      - PROSODY_HOST=prosody
 
     networks:
       - proxy-tier
@@ -25,5 +88,4 @@ networks:
   proxy-tier:
     external:
       name: nginx-proxy
-
 

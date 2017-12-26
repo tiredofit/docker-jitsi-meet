@@ -1,0 +1,29 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -f /tmp/state/10-jitsi-videobridge-init ]; then
+
+NETWORK_MODE=${NETWORK_MODE:-"HOST"}
+
+## Get Container and Public IP for NAT
+PUBLIC_IP_ADDRESS=`dig +short $HOST @resolver1.opendns.com | tail -n 1`
+LOCAL_IP_ADDRESS=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
+
+mkdir -p /usr/share/jitsi-videobridge/.sip-communicator
+echo 'org.jitsi.videobridge.AUTHORIZED_SOURCE_REGEXP=focus@auth.'$HOST'/.*' > /usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+echo 'org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false' > /usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+
+if [ "$NETWORK_MODE" = "NAT" ];  then
+	echo 'org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS='$LOCAL_IP_ADDRESS >> /usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties 
+	echo 'org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS='$PUBLIC_IP_ADDRESS >> /usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+fi
+
+echo 'org.jitsi.videobridge.SINGLE_PORT_HARVESTER_PORT=10000' >> /usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+echo 'org.ice4j.ice.harvest.STUN_MAPPING_HARVESTER_ADDRESSES=stun.l.google.com:19302' >> /usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+echo 'org.ice4j.ice.harvest.ALLOWED_ADDRESSES='$LOCAL_IP_ADDRESS >>/usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+echo 'org.ice4j.ipv6.DISABLED=true' >>/usr/share/jitsi-videobridge/.sip-communicator/sip-communicator.properties
+
+chown -R jvb /usr/share/jitsi-videobridge
+
+mkdir -p /tmp/state/
+touch /tmp/state/10-jitsi-videobridge-init
+fi

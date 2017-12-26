@@ -1,0 +1,171 @@
+#!/usr/bin/with-contenv bash
+
+LOCAL_IP_ADDRESS=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
+
+        sed -i -e "s/daemonize = true/daemonize = false/g" /etc/prosody/prosody.cfg.lua
+        sed -i -e "s/\"posix\";/--\"posix\";/g" /etc/prosody/prosody.cfg.lua
+
+        chown -R prosody /var/lib/prosody
+        chown -R prosody /var/log/prosody
+
+  mkdir -p /etc/prosody/conf.d/
+  cat  > /etc/prosody/prosody.cfg.lua <<EOF;
+daemonize = false
+pidfile = "/var/run/prosody/prosody.pid"
+
+admins = { }
+
+--use_libevent = true
+
+modules_enabled = {
+
+        "roster"; -- Allow users to have a roster. Recommended ;)
+        "saslauth"; -- Authentication for clients and servers. Recommended if you want to log in.
+        "tls"; -- Add support for secure TLS on c2s/s2s connections
+        "dialback"; -- s2s dialback support
+        "disco"; -- Service discovery
+        "carbons"; -- Keep multiple clients in sync
+        "pep"; -- Enables users to publish their mood, activity, playing music and more
+        "private"; -- Private XML storage (for room bookmarks, etc.)
+        "blocklist"; -- Allow users to block communications with other users
+        "vcard"; -- Allow users to set vCards
+        "version"; -- Replies to server version requests
+        "uptime"; -- Report how long server has been running
+        "time"; -- Let others know the time here on this server
+        "ping"; -- Replies to XMPP pings with pongs
+        "register"; -- Allow users to register on this server using a client and change passwords
+        "admin_adhoc"; -- Allows administration via an XMPP client that supports ad-hoc commands
+}
+
+allow_registration = false
+c2s_require_encryption = false
+s2s_require_encryption = true
+s2s_secure_auth = false
+authentication = "internal_hashed"
+archive_expires_after = "1w" -- Remove archived messages after 1 week
+
+log = {
+    info = "/var/log/prosody/prosody.log"; -- Change 'info' to 'debug' for verbose logging
+    error = "/var/log/prosody/error.log";
+    "*syslog"; -- Uncomment this for logging to syslog
+    -- "*console"; -- Log to the console, useful for debugging with daemonize=false
+}
+
+certificates = "certs"
+
+component_interface = "$LOCAL_IP_ADDRESS"
+
+VirtualHost "$HOST"
+        authentication = "anonymous"
+        ssl = {
+                key = "/etc/prosody/certs/$HOST.key";
+                certificate = "/etc/prosody/certs/$HOST.crt";
+        }
+
+        modules_enabled = {
+            "bosh";
+            "pubsub";
+            "ping";
+        }
+
+        c2s_require_encryption = false
+
+VirtualHost "auth.$HOST"
+    ssl = {
+        key = "/etc/prosody/certs/auth.$HOST.key";
+        certificate = "/etc/prosody/certs/auth.$HOST.crt";
+    }
+    authentication = "internal_plain"
+
+admins = { "focus@auth.$HOST" }
+
+Component "conference.$HOST" "muc"
+
+Component "jitsi-videobridge.$HOST"
+    component_secret = "$JITSI_VIDEO_PASS"
+
+Component "focus.$HOST"
+    component_secret = "$JICOFO_PASS"
+
+EOF
+
+  if [ -f /certs/$HOST.key ] ; then
+    cp -r /certs/$HOST.key /var/lib/prosody/
+  fi
+
+  if [ -f /certs/$HOST.crt ] ; then
+    cp -r /certs/$HOST.crt /var/lib/prosody/
+  fi
+
+  if [ -f /certs/auth.$HOST.key ] ; then
+    cp -r /certs/auth.$HOST.key /var/lib/prosody/
+  fi
+
+  if [ -f /certs/auth.$HOST.crt ] ; then
+    cp -r /certs/auth.$HOST.crt /var/lib/prosody/
+  fi
+
+  if [ -f /var/lib/prosody/$HOST.key ] ; then
+    echo 'Certificates already exist, skipping..'
+  else
+    echo 'Generating Certificates'
+    cat  > /tmp/generate-cert.sh <<EOF;
+#!/usr/bin/expect
+spawn prosodyctl cert generate $HOST
+expect "Choose key size"
+send -- "2048\n"
+expect "countryName"
+send -- "CA\n"
+expect "localityName"
+send -- "\n"
+expect "organizationName"
+send -- "\n"
+expect "organizationalUnitName"
+send -- "\n"
+expect "commonName"
+send -- "\n"
+expect "emailAddress"
+send -- "\n"
+expect ".crt"
+send -- "\n"
+exit 0
+EOF
+    cat  > /tmp/generate-cert-auth.sh <<EOF;
+#!/usr/bin/expect
+spawn prosodyctl cert generate auth.$HOST
+expect "Choose key size"
+send -- "2048\n"
+expect "countryName"
+send -- "CA\n"
+expect "localityName"
+send -- "\n"
+expect "organizationName"
+send -- "\n"
+expect "organizationalUnitName"
+send -- "\n"
+expect "commonName"
+send -- "\n"
+expect "emailAddress"
+send -- "\n"
+expect ".crt"
+send -- "\n"
+exit 0
+EOF
+    chmod +x /tmp/generate-cert.sh
+    chmod +x /tmp/generate-cert-auth.sh
+    sudo -u prosody /usr/bin/with-contenv /tmp/generate-cert.sh >/dev/null
+    sudo -u prosody /usr/bin/with-contenv /tmp/generate-cert-auth.sh >/dev/null
+    ln -sf /etc/prosody/certs/auth.$HOST.crt /usr/local/share/ca-certificates/auth.$HOST.crt
+    ln -sf /etc/prosody/certs/$HOST.crt /usr/local/share/ca-certificates/auth.$HOST.crt
+    cp -R /var/lib/prosody/*.crt /certs/
+    cp -R /var/lib/prosody/*.key /certs/
+fi
+    ln -s /var/lib/prosody/$HOST.crt /etc/prosody/certs/
+    ln -s /var/lib/prosody/$HOST.key /etc/prosody/certs/
+    ln -s /var/lib/prosody/auth.$HOST.crt /etc/prosody/certs/
+    ln -s /var/lib/prosody/auth.$HOST.key /etc/prosody/certs/
+    update-ca-certificates >/dev/null
+
+
+mkdir -p /tmp/state/
+touch /tmp/state/10-prosody-init
