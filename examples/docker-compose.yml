@@ -4,7 +4,7 @@ services:
   prosody:
     build: ../src/prosody
     container_name: prosody
-    image: prosody
+    image: tiredofit/jitsi-prosody
     volumes:
       - ./logs/prosody:/var/log/prosody
       - ./certs:/certs
@@ -30,7 +30,7 @@ services:
   jicofo:
     build: ../src/jicofo
     container_name: jicofo
-    image: jicofo
+    image: tiredofit/jitsi-jicofo
     volumes:
       - ./logs/jicofo:/var/log/jitsi
       - ./certs:/certs
@@ -51,7 +51,7 @@ services:
   jvb:
     build: ../src/jvb/debian
     container_name: jvb
-    image: jvb
+    image: tiredofit/jitsi-videobridge
     ports: 
       - 4443:4443
       - 10000-10100/udp
@@ -74,7 +74,7 @@ services:
   jitsi-meet:
     build: ../src/jitsi-meet
     container_name: jitsi-meet
-    image: jitsi-meet
+    image: tiredofit/jitsi-meet
     volumes:
       - ./assets/jitsi-meet:/assets/jitsi-meet
       - ./logs/nginx:/var/log/nginx
