@@ -2,24 +2,23 @@
 
   ### Adjust NGINX Runtime Variables
   mkdir -p /var/tmp/nginx
-  UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:="2G"}
+  UPLOAD_MAX_SIZE=${UPLOAD_MAX_SIZE:="10G"}
+
   sed -i -e "s/<UPLOAD_MAX_SIZE>/$UPLOAD_MAX_SIZE/g" /etc/nginx/nginx.conf
   sed -i -e "s/<VIRTUAL_HOST>/$VIRTUAL_HOST/g" /etc/nginx/conf.d/default.conf
   sed -i -e "s/<PROSODY_HOST>/$PROSODY_HOST/g"  /etc/nginx/conf.d/default.conf
 
-   if [ -f /assets/jitsi-meet/config.js ] ; then
+   if [ -f /assets/meet/config.js ] ; then
         echo '** [jitsi-meet] Custom Jitsi Meet config.js found'
-        cp -R /assets/jitsi-meet/config.js /app/config.js
-   else
-        sed -i -e "s/jitsi-meet.example.com/$VIRTUAL_HOST/g" /app/config.js
-        sed -i -e "/muc:/a \
-            bridge: 'jitsi-videobridge.$VIRTUAL_HOST'," /app/config.js
-        sed -i -e "s/muc: 'conference.$VIRTUAL_HOST'/muc: 'conference.$VIRTUAL_HOST',/g" /app/config.js
+        cp -R /assets/meet/config.js /app/config.js
    fi
+        sed -i -e "s/jitsi-meet.example.com/$VIRTUAL_HOST/g" /app/config.js
 
-   if [ -d /assets/jitsi-meet ]; then
+   if [ -d /assets/meet ]; then
         echo '** [jitsi-meet] Custom Jitsi Meet Addons found'
-        cp -R /assets/jitsi-meet/* /app/
+        mv /assets/meet/config.js /tmp/
+        cp -R /assets/meet/* /app/
+        mv /tmp/config.js /assets/meet/config.js
         chown -R jitsi /app/
    fi
 

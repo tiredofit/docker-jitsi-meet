@@ -99,16 +99,6 @@ Below is the complete list of available options that can be used to customize yo
 | `JITSI_VIDEO_PASS` | Jitsi Video Bridge Secret e.g. `secret3` |
 | `JICOFO_PASS` | Jitsi Conference Focus Secret e.g. `secret2` |
 | `JICOFO_USER_PASS` | Jitsi Conference Focus User Secret e.g. `secret1` |
-| `LDAP_ENABLED` | Enable LDAP Authentication support e.g. `true/false` |
-| `LDAP_HOST` | Hostname for Ldap Host e.g. `ldap.example.com`
-| `LDAP_BIND_DN` | Bind Username for LDAP e.g. `cn=admin,dc=example,dc=com`
-| `LDAP_BIND_PASS` | Bind pass for LDAP e.g. `supersecurepassword`
-| `LDAP_BASE_DN` | LDAP Base DN e.g. `dc=example,dc=com`
-| `LDAP_FILTER` | LDAP Filter e.g. `(&(memberOf=CN=app-jitsi,OU=groups,DC=example,DC=com))`
-| `LDAP_TLS`    | Use TLS for LDAP e.g. `TRUE/FALSE`
-| `LDAP_CN`     | Common Name Attribute for Ldap - Default `cn`
-| `LDAP_UID`     | Attribute for Login for Ldap - Default `uid`
-
 
 #### jitsi-videobridge
 | Parameter         | Description                                                    |
@@ -126,14 +116,11 @@ Below is the complete list of available options that can be used to customize yo
 | `PROSODY_HOST`      | Container Name of your prosody server e.g. `prosody`         |
 | `JICOFO_PASS` | Jitsi Conference Focus Secret e.g. `secret2` |
 | `JICOFO_USER_PASS` | Jitsi Conference Focus User Secret e.g. `secret1` |
-| `LDAP_ENABLED` | Enable LDAP Authentication support e.g. `true/false` |
-
 
 #### jitsi-meet
 | Parameter         | Description                                                    |
 |-------------------|----------------------------------------------------------------|
 | `PROSODY_HOST`      | Container Name of your prosody server e.g. `prosody`         |
-| `LDAP_ENABLED` | Enable LDAP Authentication support e.g. `true/false` |
 
 
 ### Networking

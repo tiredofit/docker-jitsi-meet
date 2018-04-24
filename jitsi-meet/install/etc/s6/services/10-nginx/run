@@ -15,5 +15,5 @@ if [ ! -f /tmp/state/10-nginx ]; then
 fi
 
 echo ''
-echo '** [jitsi-meet] Starting nginx..'
+echo '** [jitsi-meet] Starting nginx'
 exec nginx

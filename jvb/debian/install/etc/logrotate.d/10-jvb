@@ -7,7 +7,7 @@
     dateext
     sharedscripts
     postrotate
-    s6-svc -h /var/run/s6/services/10-jitsi-meet
+    s6-svc -h /var/run/s6/services/10-jitsi-videobridge
     endscript
 }
 

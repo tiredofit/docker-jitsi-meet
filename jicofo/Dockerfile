@@ -3,8 +3,7 @@ LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
 
 ### Set Environment Variables
   ENV ENABLE_SMTP=FALSE \
-      JICOFO_VERSION=388
-
+      JICOFO_VERSION=403
 
 ### Add User
   RUN adduser -h /usr/share/jicofo -D -g "Jitsi Conference Focus" -u 2500 jicofo && \
@@ -38,14 +37,12 @@ LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
    
     apk add \
         openjdk8-jre \
+        && \
 
     rm -rf /root/.m2 /usr/src/* /var/cache/apk/* /tmp/* /var/tmp/*
-
-### Add Files
-  ADD install /
 
 ### Networking Configuration
   EXPOSE 5222 5347
 
-### Entrypoint Configuration
-  ENTRYPOINT ["/init"]
+### Add Files
+  ADD install /

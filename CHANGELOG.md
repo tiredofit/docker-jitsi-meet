@@ -1,3 +1,7 @@
+## 2.2 2018-04-13 <dave at tiredofit dot ca>
+
+* Bump Versions
+
 ## 2.1 2017-12-26 <dave at tiredofit dot ca>
 
 * Added LDAP Authentication features
