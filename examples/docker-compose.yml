@@ -2,7 +2,7 @@ version: '2'
 
 services:
   prosody:
-    build: ../src/prosody
+    build: ../prosody
     container_name: prosody
     image: prosody
     volumes:
@@ -20,7 +20,7 @@ services:
     restart: always
 
   jicofo:
-    build: ../src/jicofo
+    build: ../jicofo
     container_name: jicofo
     image: jicofo
     volumes:
@@ -38,7 +38,7 @@ services:
     restart: always
 
   jvb:
-    build: ../src/jvb/debian
+    build: ../jvb/debian
     container_name: jvb
     image: jvb
     ports: 
@@ -61,7 +61,7 @@ services:
     restart: always
 
   jitsi-meet:
-    build: ../src/jitsi-meet
+    build: ../jitsi-meet
     container_name: jitsi-meet
     image: jitsi-meet
     volumes:
