@@ -21,6 +21,7 @@ ENV ENABLE_SMTP=FALSE \
     curl -sSL https://codeload.github.com/jitsi/jitsi-meet/tar.gz/jitsi-meet_$JITSIMEET_VERSION | tar xvfz - --strip 1 -C /app/ ; \
     cd /app ; \
 ### Install
+    rm -rf node_modules package-lock.json ; \
     npm install node-sass@latest ; \
     npm install ; \
     make ; \
