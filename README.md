@@ -13,7 +13,7 @@ This is a series of Dockerfiles to build a [Jitsi Meet](meet.jit.si) webRTC conf
 
 # Authors
 
-- [Dave Conroy][https://github.com/tiredofit]
+- [Dave Conroy](https://github.com/tiredofit)
 
 # Table of Contents
 
@@ -23,7 +23,7 @@ This is a series of Dockerfiles to build a [Jitsi Meet](meet.jit.si) webRTC conf
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
     - [Data Volumes](#data-volumes)
-    - [Environment Variables](#environmentvariables)   
+    - [Environment Variables](#environment-variables)   
     - [Networking](#networking)
 - [Maintenance](#maintenance)
     - [Shell Access](#shell-access)
