@@ -20,7 +20,10 @@ services:
     restart: always
 
   jicofo:
-    build: ../jicofo
+    build:
+      context: ../jicofo
+      args:
+        JICOFO_VERSION: "403"
     container_name: jicofo
     image: jicofo
     volumes:
@@ -41,7 +44,7 @@ services:
     build: ../jvb/debian
     container_name: jvb
     image: jvb
-    ports: 
+    ports:
       - 4443:4443
       - 10000-10100/udp
     volumes:
@@ -61,7 +64,10 @@ services:
     restart: always
 
   jitsi-meet:
-    build: ../jitsi-meet
+    build:
+      context: ../jitsi-meet
+      args:
+        JITSIMEET_VERSION: "2993"
     container_name: jitsi-meet
     image: jitsi-meet
     volumes:

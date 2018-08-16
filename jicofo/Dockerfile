@@ -1,9 +1,12 @@
 FROM tiredofit/alpine:3.7
 LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
 
+ARG JICOFO_VERSION
+
 ### Set Environment Variables
-  ENV ENABLE_SMTP=FALSE \
-      JICOFO_VERSION=403
+ENV ENABLE_SMTP=FALSE
+ENV JICOFO_VERSION=${JICOFO_VERSION:-403}
+
 
 ### Add User
   RUN adduser -h /usr/share/jicofo -D -g "Jitsi Conference Focus" -u 2500 jicofo && \
