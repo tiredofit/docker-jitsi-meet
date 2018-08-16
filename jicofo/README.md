@@ -1,9 +1,10 @@
 # github.com/tiredofit/docker-jitsi-meet
 
-[![Build Status](https://img.shields.io/docker/build/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-meet)
-[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-meet)
-[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-meet)
-[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/jitsi-meet.svg)](https://microbadger.com/images/tiredofit/jitsi-meet)
+[![Build Status](https://img.shields.io/docker/build/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-jicofo)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-jicofo)
+[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-jicofo)
+[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/jitsi-meet.svg)](https://microbadger.com/images/tiredofit/jitsi-jicofo)
+
 # Introduction
 
 This is a series of Dockerfiles to build a [Jitsi Meet](meet.jit.si) webRTC conferencing solution.
