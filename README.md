@@ -55,7 +55,7 @@ docker pull tiredofit/jitsi-jicofo
 # Quick Start
 
 * The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/). See the examples folder for a working 
-[docker-compose.yml](examples/docker-compose.yml) that can be modified for development or production use. All you will need to do is 
+[docker-compose.yml](https://github.com/tiredofit/docker-jitsi-meet/blob/master/examples/docker-compose.yml) that can be modified for development or production use. All you will need to do is 
 change the `HOST` and `VIRTUAL_HOST,LETSENCRYPT_HOST` variables and the system will automatically generate certificates for you and 
 the system will function.
 
