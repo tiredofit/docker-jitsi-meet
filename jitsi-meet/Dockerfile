@@ -43,3 +43,6 @@ ENV JITSIMEET_VERSION=${JITSIMEET_VERSION:-2993}
 
 ### Add Files
   ADD install /
+
+### Entrypoint Configuration
+  ENTRYPOINT ["/init"]
