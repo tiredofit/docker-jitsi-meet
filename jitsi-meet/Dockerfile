@@ -1,9 +1,11 @@
 FROM tiredofit/nodejs:8-latest
 LABEL maintainer="Dave Conroy <dave at tiredofit dot ca>"
 
+ARG JITSIMEET_VERSION
+
 ### Set Environment Variables
-ENV ENABLE_SMTP=FALSE \
-    JITSIMEET_VERSION=2957
+ENV ENABLE_SMTP=FALSE
+ENV JITSIMEET_VERSION=${JITSIMEET_VERSION:-2957}
 
 ### Add User
   RUN set -x ; \
