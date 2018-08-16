@@ -1,9 +1,9 @@
 # github.com/tiredofit/docker-jitsi-meet
 
-[![Build Status](https://img.shields.io/docker/build/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-videobridge)
-[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-videobridge)
-[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-videobridge)
-[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/jitsi-meet.svg)](https://microbadger.com/images/tiredofit/jitsi-videobridge)
+[![Build Status](https://img.shields.io/docker/build/tiredofit/jitsi-videobridge.svg)](https://hub.docker.com/r/tiredofit/jitsi-videobridge)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/jitsi-videobridge.svg)](https://hub.docker.com/r/tiredofit/jitsi-videobridge)
+[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/jitsi-videobridge.svg)](https://hub.docker.com/r/tiredofit/jitsi-videobridge)
+[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/jitsi-videobridge.svg)](https://microbadger.com/images/tiredofit/jitsi-videobridge)
 
 # Introduction
 

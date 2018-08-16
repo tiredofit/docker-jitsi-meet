@@ -1,9 +1,9 @@
 # github.com/tiredofit/docker-jitsi-meet
 
-[![Build Status](https://img.shields.io/docker/build/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-prosody)
-[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-prosody)
-[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/jitsi-meet.svg)](https://hub.docker.com/r/tiredofit/jitsi-prosody)
-[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/jitsi-meet.svg)](https://microbadger.com/images/tiredofit/jitsi-prosody)
+[![Build Status](https://img.shields.io/docker/build/tiredofit/jitsi-prosody.svg)](https://hub.docker.com/r/tiredofit/jitsi-prosody)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tiredofit/jitsi-prosody.svg)](https://hub.docker.com/r/tiredofit/jitsi-prosody)
+[![Docker Stars](https://img.shields.io/docker/stars/tiredofit/jitsi-prosody.svg)](https://hub.docker.com/r/tiredofit/jitsi-prosody)
+[![Docker Layers](https://images.microbadger.com/badges/image/tiredofit/jitsi-prosody.svg)](https://microbadger.com/images/tiredofit/jitsi-prosody)
 
 # Introduction
 
